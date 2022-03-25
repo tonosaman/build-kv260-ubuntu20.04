@@ -1,0 +1,79 @@
+name: Release kernel packages
+
+on: [push]
+
+env:
+  UBUNTU_BRANCH: Ubuntu-xilinx-zynqmp-5.4.0-1017.20
+  KERNEL_CONFIG: config-5.4.0-1017-xilinx-zynqmp
+  CACHE_PATH: .cache
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: mkdir -p ${CACHE_PATH}
+      - name: Create cache
+        id: cache-buildenv
+        uses: actions/cache@v2
+        with:
+          path: ${{ env.CACHE_PATH }}
+          key: ${{ runner.os }}-${{ env.UBUNTU_BRANCH }}-${{ hashFiles('Dockerfile') }}
+      - name: Fetch kernel source
+        if: steps.cache-buildenv.outputs.cache-hit != 'true'
+        run: |
+          rm -rf ${CACHE_PATH}/build # if cache-hit returns 'false', there may be garbage remaining.
+          mkdir -p ${CACHE_PATH}/build
+          git clone --depth 1 --branch Ubuntu-xilinx-zynqmp-5.4.0-1017.20 \
+            https://git.launchpad.net/~canonical-kernel/ubuntu/+source/linux-xilinx-zynqmp/+git/focal \
+            ${CACHE_PATH}/build/src
+      - name: Build docker image
+        if: steps.cache-buildenv.outputs.cache-hit != 'true'
+        run: docker build . --file Dockerfile --tag build-kv260-ubuntu:20.04
+      - name: Save docker image
+        if: steps.cache-buildenv.outputs.cache-hit != 'true'
+        run: docker save build-kv260-ubuntu:20.04 | gzip > ${CACHE_PATH}/build-kv260-ubuntu_20.04.tgz
+  build:
+    needs: setup
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/cache@v2
+        with:
+          path: ${{ env.CACHE_PATH }}
+          key: ${{ runner.os }}-${{ env.UBUNTU_BRANCH }}-${{ hashFiles('Dockerfile') }}
+      - name: Load docker image from cache
+        run: docker load -i ${CACHE_PATH}/build-kv260-ubuntu_20.04.tgz
+      - name: Mount overlay to isolate intermediate files
+        run: |
+          mkdir -p /tmp/upper /tmp/work
+          sudo mount -t overlay -o rw,lowerdir=${CACHE_PATH}/build,upperdir=/tmp/upper,workdir=/tmp/work overlay ${CACHE_PATH}/build
+      - name: Config kernel options
+        run: cp ${KERNEL_CONFIG} ${CACHE_PATH}/build/src/debian.zynqmp/config/config.common.ubuntu
+      - name: Build kernel packages
+        run: |
+          docker run -v ${PWD}/${CACHE_PATH}/build:/build -w /build/src build-kv260-ubuntu:20.04 \
+            sh -c 'export $(dpkg-architecture -aarm64) && fakeroot debian/rules clean && fakeroot debian/rules binary'
+      - name: Tar packages
+        run: (cd ${CACHE_PATH}/build/ && tar -cvf ../../kernel_dpkgs_${UBUNTU_BRANCH}_${GITHUB_SHA}.tar *.deb)
+      - run: sudo umount ${CACHE_PATH}/build
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: false
+          prerelease: false
+      - name: Upload Release Asset
+        id: upload-release-asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: kernel_dpkgs_${{ env.UBUNTU_BRANCH }}_${{ github.sha }}.tar
+          asset_name: kernel_dpkgs_${{ env.UBUNTU_BRANCH }}_${{ github.sha }}.tar
+          asset_content_type: application/x-tar
