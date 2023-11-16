@@ -12,7 +12,7 @@ ENV DEBIAN_FRONTEND noninteractive
 ENV DEBCONF_NOWARNINGS yes
 
 RUN echo "deb-src http://archive.ubuntu.com/ubuntu jammy main" | tee -a /etc/apt/sources.list.d/jammy.list
-RUN apt-get update && (apt-get install -y libncurses-dev gawk flex bison openssl libssl-dev dkms libelf-dev libudev-dev libpci-dev libiberty-dev autoconf dh-make cpio rsync bc llvm fakeroot gcc-aarch64-linux-gnu linux-tools-common dpkg-cross) && apt-get clean && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && (apt-get install -y libncurses-dev gawk flex bison openssl libssl-dev dkms libelf-dev libudev-dev libpci-dev libiberty-dev autoconf dh-make cpio rsync bc llvm fakeroot gcc-aarch64-linux-gnu linux-tools-common dwarves dpkg-cross) && apt-get clean && rm -rf /var/lib/apt/lists/*
 ENV ARCH=arm64 
 ENV CROSS_COMPILE=aarch64-linux-gnu-
 ENV CONFIG_SITE=/etc/dpkg-cross/cross-config.arm64

@@ -1,28 +1,59 @@
-# build-kv260-ubuntu22.04
+# Build kv260-ubuntu22.04-debug
 
-Dockerfile for building Ubuntu 22.04 on Xilinx Kria KV260 kernel image package (*.deb) 
+```shell
+./build.sh
+```
 
-| md5sum | dpkg |
-|---------|---------------|
-| b08f7d735ff34d4c6369d814280258f8 | linux-buildinfo-5.4.0-1020-xilinx-zynqmp_5.4.0-1020.24_arm64.deb |
-| 880f9abf1c16386506bf88ada3116166 | linux-headers-5.4.0-1020-xilinx-zynqmp_5.4.0-1020.24_arm64.deb   |
-| 3a57603fa9d0649c0a996910e626a918 | linux-image-5.4.0-1020-xilinx-zynqmp_5.4.0-1020.24_arm64.deb     |
-| 365667c83f7d4318aabd877533b26d55 | linux-modules-5.4.0-1020-xilinx-zynqmp_5.4.0-1020.24_arm64.deb   |
-| a5e3eb55903bbbd1a034fcdb77ba479f | linux-xilinx-zynqmp-headers-5.4.0-1020_5.4.0-1020.24_all.deb     |
+# kernel debuging
 
-[![Packaging kernel of Ubuntu-xilinx-zynqmp-5.4.0-1017.20](https://github.com/tonosaman/build-kv260-ubuntu20.04/actions/workflows/build-packages.yml/badge.svg)](https://github.com/tonosaman/build-kv260-ubuntu20.04/actions/workflows/build-packages.yml)
+```shell
+./debug-kria-kgdb-over-usb-serial.sh
+```
 
 ## [Xilinx Kria KV260 Vision AI Starter Kit](https://ubuntu.com/certified/202104-28895)
 
+Xilinx official downloadable microSD iamge contains an old kernel packages. (2023-11-15)
+
 | Releaces | git.lanchpad.net |
 |----------|------------------|
-| Ubuntu 22.04 LTS arm64 | [5.15.0-1020-xilinx-zynqmp](https://git.launchpad.net/~canonical-kernel/ubuntu/+source/linux-xilinx-zynqmp/+git/focal/tag/?h=Ubuntu-xilinx-zynqmp-5.4.0-1020.24) [debian.zynqmp/config/config.common.ubuntu](https://git.launchpad.net/~canonical-kernel/ubuntu/+source/linux-xilinx-zynqmp/+git/focal/plain/debian.zynqmp/config/config.common.ubuntu?h=Ubuntu-xilinx-zynqmp-5.4.0-1020.24) |
-| Ubuntu 20.04 LTS arm64 | [5.4.0-1017.20-xilinx-zynqmp](https://git.launchpad.net/~canonical-kernel/ubuntu/+source/linux-xilinx-zynqmp/+git/focal/tag/?h=Ubuntu-xilinx-zynqmp-5.4.0-1017.20) [debian.zynqmp/config/config.common.ubuntu](https://git.launchpad.net/~canonical-kernel/ubuntu/+source/linux-xilinx-zynqmp/+git/focal/plain/debian.zynqmp/config/config.common.ubuntu?h=Ubuntu-xilinx-zynqmp-5.4.0-1017.20) |
+| Ubuntu 22.04 LTS arm64 | [5.15.0-1020-xilinx-zynqmp][] [debian.zynqmp/config/config.common.ubuntu][1020-config] |
+| Ubuntu 20.04 LTS arm64 | [5.4.0-1017-xilinx-zynqmp][] [debian.zynqmp/config/config.common.ubuntu][1017-config] |
 
+## Ubuntu linux-xilinx-zynqmp package status (2023-11-15)
+
+- https://launchpad.net/ubuntu/+source/linux-xilinx-zynqmp
+- https://git.launchpad.net/~canonical-kernel/ubuntu/+source/linux-xilinx-zynqmp/+git/jammy
+
+| Ubuntu 22.04 (Jammy Jellyfish) | update category | tag date |
+|----------------|---------------------|------------|
+| [5.15.0-1025-xilinx-zynqmp][] [debian.master/config][1025-config] | urgency=medium | 2023-10-31 10:02:14 +1000 |
+| [5.15.0-1020-xilinx-zynqmp][] [debian.master/config][1020-config] | urgency=medium | 2023-02-24 21:57:28 +0800 |
+| [5.15.0-1010-xilinx-zynqmp][] [debian.master/config][1010-config] | urgency=medium | 2022-06-09 10:16:25 +0800 |
+
+[5.15.0-1025-xilinx-zynqmp]: https://git.launchpad.net/~canonical-kernel/ubuntu/+source/linux-xilinx-zynqmp/+git/jammy/tag/?h=Ubuntu-xilinx-zynqmp-5.15.0-1025.29
+[5.15.0-1020-xilinx-zynqmp]: https://git.launchpad.net/~canonical-kernel/ubuntu/+source/linux-xilinx-zynqmp/+git/jammy/tag/?h=Ubuntu-xilinx-zynqmp-5.15.0-1020.22
+[5.15.0-1010-xilinx-zynqmp]: https://git.launchpad.net/~canonical-kernel/ubuntu/+source/linux-xilinx-zynqmp/+git/jammy/tag/?h=Ubuntu-xilinx-zynqmp-5.15.0-1010.11
+[5.4.0-1017-xilinx-zynqmp]: https://git.launchpad.net/~canonical-kernel/ubuntu/+source/linux-xilinx-zynqmp/+git/focal/tag/?h=Ubuntu-xilinx-zynqmp-5.4.0-1017.20
+[1025-config]: https://git.launchpad.net/~canonical-kernel/ubuntu/+source/linux-xilinx-zynqmp/+git/jammy/tree/debian.master/config/annotations?h=Ubuntu-xilinx-zynqmp-5.15.0-1025.29
+[1020-config]: https://git.launchpad.net/~canonical-kernel/ubuntu/+source/linux-xilinx-zynqmp/+git/jammy/tree/debian.master/config/annotations?h=Ubuntu-xilinx-zynqmp-5.15.0-1020.22
+[1017-config]: https://git.launchpad.net/~canonical-kernel/ubuntu/+source/linux-xilinx-zynqmp/+git/focal/plain/debian.zynqmp/config/config.common.ubuntu?h=Ubuntu-xilinx-zynqmp-5.4.0-1017.20
+[1010-config]: https://git.launchpad.net/~canonical-kernel/ubuntu/+source/linux-xilinx-zynqmp/+git/jammy/tree/debian.master/config/annotations?h=Ubuntu-xilinx-zynqmp-5.15.0-1010.11
+
+## Edit configs for kernel debugging
+
+- [Debugging Guest Applications with QEMU and GDB](https://xilinx-wiki.atlassian.net/wiki/spaces/A/pages/821624963/Debugging+Guest+Applications+with+QEMU+and+GDB)
+- [Debugging kernel and modules via gdb](https://github.com/Xilinx/linux-xlnx/blob/master/Documentation/dev-tools/gdb-kernel-debugging.rst)@linux-xlnx/Documentation/dev-tools/gdb-kernel-debugging.rst
+
+  - [3497][] CONFIG_DEBUG_INFO_REDUCED policy<{'amd64': 'n', 'arm64': 'n', 'armhf': 'n', 'ppc64el': 'n', 's390x': 'n'}>
+  - [4704][] CONFIG_FRAME_POINTER      policy<{'amd64': 'y', 'arm64': 'y', 'armhf': 'y'}>
+  - [4833][] CONFIG_GDB_SCRIPTS        policy<{'amd64': 'y', 'arm64': 'y', 'armhf': 'y', 'ppc64el': 'y', 's390x': 'y'}>
+  - [9779][] CONFIG_RANDOMIZE_BASE     policy<{'amd64': 'y', 'arm64': 'y', 's390x': 'y'}>
+
+[3497]: https://git.launchpad.net/~canonical-kernel/ubuntu/+source/linux-xilinx-zynqmp/+git/jammy/tree/debian.master/config/annotations?h=Ubuntu-xilinx-zynqmp-5.15.0-1025.29#n3497
+[4704]: https://git.launchpad.net/~canonical-kernel/ubuntu/+source/linux-xilinx-zynqmp/+git/jammy/tree/debian.master/config/annotations?h=Ubuntu-xilinx-zynqmp-5.15.0-1025.29#n4704
+[4833]: https://git.launchpad.net/~canonical-kernel/ubuntu/+source/linux-xilinx-zynqmp/+git/jammy/tree/debian.master/config/annotations?h=Ubuntu-xilinx-zynqmp-5.15.0-1025.29#n4833
+[9779]: https://git.launchpad.net/~canonical-kernel/ubuntu/+source/linux-xilinx-zynqmp/+git/jammy/tree/debian.master/config/annotations?h=Ubuntu-xilinx-zynqmp-5.15.0-1025.29#n9779
+
+## [Kernel configuration in Ubuntu](https://discourse.ubuntu.com/t/kernel-configuration-in-ubuntu/35857)
 ## [BuildYourOwnKernel](https://wiki.ubuntu.com/Kernel/BuildYourOwnKernel)@Ubuntu Wiki
-
-- [debian.zynqmp/config/config.common.ubuntu](https://git.launchpad.net/~canonical-kernel/ubuntu/+source/linux-xilinx-zynqmp/+git/focal/tree/debian.zynqmp/config/config.common.ubuntu)
-
-
-https://git.launchpad.net/~canonical-kernel/ubuntu/+source/linux-xilinx-zynqmp/+git/focal/tree/debian.zynqmp/config/config.common.ubuntu?h=Ubuntu-xilinx-zynqmp-5.4.0-1020.24
 
